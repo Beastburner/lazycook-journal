@@ -16,3 +16,10 @@ All notable changes to this project will be documented in this file.
 - Added keyboard navigation for chat list (↑ ↓ Enter)
 - Synced sidebar header and topbar alignment
 - Improved mobile close/open interactions
+
+### AI Communication System
+- Designed tone memory and decay system
+- Added user preference learning (frontend-only)
+- Defined error and uncertainty language rules
+- Implemented confidence-without-arrogance constraints
+- Added teaching vs answering mode control
