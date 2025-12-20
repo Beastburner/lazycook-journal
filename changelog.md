@@ -23,3 +23,9 @@ All notable changes to this project will be documented in this file.
 - Defined error and uncertainty language rules
 - Implemented confidence-without-arrogance constraints
 - Added teaching vs answering mode control
+
+### Emoji & Icon Strategy
+- Defined strict, friendly, and expressive emoji modes
+- Added expanded emoji taxonomy with safeguards
+- Unified emoji and icon responsibilities
+- Implemented intent-based emoji suppression
