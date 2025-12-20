@@ -29,3 +29,9 @@ All notable changes to this project will be documented in this file.
 - Added expanded emoji taxonomy with safeguards
 - Unified emoji and icon responsibilities
 - Implemented intent-based emoji suppression
+
+### Chat Title Generation
+- Replaced emotional chat titles with intent-based titles
+- Implemented 3–6 word neutral title rules
+- Generated titles from first meaningful user prompt
+- Aligned sidebar titles with ChatGPT behavior
