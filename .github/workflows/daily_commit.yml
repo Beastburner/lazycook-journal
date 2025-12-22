@@ -1,4 +1,4 @@
-name: LazyCook Journal Auto Commit (Gemini AI)
+name: LazyCook Journal
 
 on:
   schedule:
