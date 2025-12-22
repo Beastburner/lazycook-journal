@@ -1,0 +1,37 @@
+name: LazyCook Journal Auto Commit
+
+on:
+  schedule:
+    - cron: "30 18 * * *" # 12:00 AM IST
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update journal
+        run: |
+          FILE="commit_number.md"
+
+          if [ ! -f "$FILE" ]; then
+            echo "# LazyCook Journal 🧠🔥" > "$FILE"
+            echo "" >> "$FILE"
+            echo "Commit count: 1" >> "$FILE"
+            echo "Last update: $(date)" >> "$FILE"
+          else
+            COUNT=$(grep -oP 'Commit count: \K\d+' "$FILE")
+            COUNT=${COUNT:-0}
+            NEXT=$((COUNT + 1))
+            sed -i "s/Commit count:.*/Commit count: $NEXT/" "$FILE"
+            sed -i "s/Last update:.*/Last update: $(date)/" "$FILE"
+          fi
+
+          git config user.name "Beastburner"
+          git config user.email "actions@github.com"
+
+          git add "$FILE"
+          git commit -m "LazyCook daily journal update 🌱"
+          git push
