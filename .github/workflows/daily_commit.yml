@@ -1,37 +1,50 @@
-name: LazyCook Journal Auto Commit
+name: LazyCook Journal Auto Commit (Gemini AI)
 
 on:
   schedule:
     - cron: "30 18 * * *" # 12:00 AM IST
+  workflow_dispatch:
 
 jobs:
-  auto-commit:
+  ai-journal:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Update journal
+      - name: Generate AI journal entry with Gemini
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          FILE="commit_number.md"
+          DATE=$(date +"%Y-%m-%d")
 
-          if [ ! -f "$FILE" ]; then
-            echo "# LazyCook Journal 🧠🔥" > "$FILE"
-            echo "" >> "$FILE"
-            echo "Commit count: 1" >> "$FILE"
-            echo "Last update: $(date)" >> "$FILE"
-          else
-            COUNT=$(grep -oP 'Commit count: \K\d+' "$FILE")
-            COUNT=${COUNT:-0}
-            NEXT=$((COUNT + 1))
-            sed -i "s/Commit count:.*/Commit count: $NEXT/" "$FILE"
-            sed -i "s/Last update:.*/Last update: $(date)/" "$FILE"
+          RESPONSE=$(curl -s \
+            -H "Content-Type: application/json" \
+            -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$GEMINI_API_KEY" \
+            -d '{
+              "contents": [{
+                "parts": [{
+                  "text": "You are a solo developer maintaining a project called LazyCook. Write a short, casual, human-sounding daily dev journal entry (1–2 sentences). Avoid emojis, hashtags, and buzzwords. Some days are productive, some reflective."
+                }]
+              }]
+            }')
+
+          ENTRY=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text')
+
+          if [ -z "$ENTRY" ] || [ "$ENTRY" = "null" ]; then
+            ENTRY="Quiet progress today. Focused on keeping things consistent."
           fi
 
+          echo "## $DATE" >> journal.md
+          echo "$ENTRY" >> journal.md
+          echo "" >> journal.md
+
+      - name: Commit journal update
+        run: |
           git config user.name "Beastburner"
           git config user.email "actions@github.com"
 
-          git add "$FILE"
-          git commit -m "LazyCook daily journal update 🌱"
+          git add journal.md
+          git commit -m "Daily journal – $DATE"
           git push
